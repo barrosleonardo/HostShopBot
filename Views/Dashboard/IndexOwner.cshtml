@@ -1,0 +1,200 @@
+@model object
+
+@{
+    ViewData["Title"] = "Dashboard do Dono";
+    var totalBalance = ViewBag.TotalBalance as string ?? "R$ 0,00";
+    var retentionAmount = ViewBag.RetentionAmount as string ?? "R$ 0,00";
+    var pendingTransactions = ViewBag.PendingTransactions as int? ?? 0;
+    var pendingPayouts = ViewBag.PendingPayouts as int? ?? 0;
+    var productTransactionDates = ViewBag.ProductTransactionDates as List<string> ?? new List<string>();
+    var productTransactionValues = ViewBag.ProductTransactionValues as List<double> ?? new List<double>();
+    var payoutTransactionDates = ViewBag.PayoutTransactionDates as List<string> ?? new List<string>();
+    var payoutTransactionValues = ViewBag.PayoutTransactionValues as List<double> ?? new List<double>();
+    var startDate = ViewBag.StartDate as DateTime? ?? DateTime.Now.AddDays(-7);
+    var endDate = ViewBag.EndDate as DateTime? ?? DateTime.Now;
+    var selectedApartmentId = ViewBag.SelectedApartmentId as int?;
+    var userApartments = ViewBag.UserApartments as List<AirbnbShopApi.Models.Apartment> ?? new List<AirbnbShopApi.Models.Apartment>();
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="IndexOwner" method="get">
+            <div class="form-group">
+                <label>Apartamento</label>
+                <select name="selectedApartmentId" class="form-control" onchange="this.form.submit()" required>
+                    <option value="">-- Selecione um apartamento --</option>
+                    @foreach (var apartment in userApartments)
+                    {
+                        if (apartment.Id == selectedApartmentId)
+                        {
+                            <option value="@apartment.Id" selected>@apartment.Name (Saldo: R$@apartment.Balance.ToString("N2"))</option>
+                        }
+                        else
+                        {
+                            <option value="@apartment.Id">@apartment.Name (Saldo: R$@apartment.Balance.ToString("N2"))</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Data Inicial</label>
+                <input type="date" name="startDate" class="form-control" value="@startDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="form-group">
+                <label>Data Final</label>
+                <input type="date" name="endDate" class="form-control" value="@endDate.ToString("yyyy-MM-dd")" />
+            </div>
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Saldo Total</h5>
+                <p class="card-text">@totalBalance</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Transações Pendentes</h5>
+                <p class="card-text">@pendingTransactions</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Payouts Pendentes</h5>
+                <p class="card-text">@pendingPayouts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <h4>Transações de Produtos</h4>
+        <canvas id="productChart" width="400" height="200"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h4>Solicitações de Payout</h4>
+        <canvas id="payoutChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-4">
+        <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Saldo de Retenção</h5>
+                <p class="card-text">@retentionAmount</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Gráfico de Transações de Produtos
+        var productCtx = document.getElementById('productChart').getContext('2d');
+        var productChart = new Chart(productCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(productTransactionDates)),
+                datasets: [{
+                    label: 'Valor de Transações (R$)',
+                    data: @Html.Raw(Json.Serialize(productTransactionValues)),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Valor de Transações (R$)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return 'R$ ' + value.toFixed(2);
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'R$ ' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de Solicitações de Payout
+        var payoutCtx = document.getElementById('payoutChart').getContext('2d');
+        var payoutChart = new Chart(payoutCtx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(payoutTransactionDates)),
+                datasets: [{
+                    label: 'Valor de Payouts (R$)',
+                    data: @Html.Raw(Json.Serialize(payoutTransactionValues)),
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Valor de Payouts (R$)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return 'R$ ' + value.toFixed(2);
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Data'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'R$ ' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

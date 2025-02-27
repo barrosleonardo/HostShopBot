@@ -1,0 +1,16 @@
+  Determinando os projetos a serem restaurados...
+  Todos os projetos estão atualizados para restauração.
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/HomeController.cs(160,95): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/HomeController.cs(265,95): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/AdminIndex.cshtml(133,282): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+  AirbnbShopApi -> /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/bin/Debug/net9.0/AirbnbShopApi.dll
+
+Compilação com êxito.
+
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/HomeController.cs(160,95): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/HomeController.cs(265,95): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/AdminIndex.cshtml(133,282): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+    3 Aviso(s)
+    0 Erro(s)
+
+Tempo Decorrido 00:00:02.25

@@ -1,0 +1,139 @@
+@model IEnumerable<object>
+
+@{
+    ViewData["Title"] = "Relatório de Transações";
+    var startDate = ViewBag.StartDate as DateTime?;
+    var endDate = ViewBag.EndDate as DateTime?;
+    var status = ViewBag.Status as string;
+    var type = ViewBag.Type as string;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="TransactionReport" method="get">
+    <div class="form-group">
+        <label>Data Inicial</label>
+        <input type="datetime-local" name="startDate" class="form-control" value="@(startDate.HasValue ? startDate.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+    <div class="form-group">
+        <label>Data Final</label>
+        <input type="datetime-local" name="endDate" class="form-control" value="@(endDate.HasValue ? endDate.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+    <div class="form-group">
+        <label>Status</label>
+        <select name="status" class="form-control">
+            <option value="">Todos</option>
+            @if (type == "Product")
+            {
+                <option value="Pending" selected="@(status == "Pending")">Pendente</option>
+                <option value="Confirmed" selected="@(status == "Confirmed")">Confirmado</option>
+                <option value="Failed" selected="@(status == "Failed")">Falhou</option>
+            }
+            else
+            {
+                <option value="Solicitado" selected="@(status == "Solicitado")">Solicitado</option>
+                <option value="Processado" selected="@(status == "Processado")">Processado</option>
+                <option value="Falha" selected="@(status == "Falha")">Falha</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Tipo</label>
+        <select name="type" class="form-control">
+            <option value="Product" selected="@(type == "Product")">Pagamentos de Produtos</option>
+            <option value="Payout" selected="@(type == "Payout")">Solicitações de Payout</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <button type="button" id="exportCsvButton" class="btn btn-secondary">Exportar CSV</button>
+</form>
+
+<h3>Resultados</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>@(type == "Product" ? "Produto" : "Apartamento")</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Status</th>
+            @if (type == "Product")
+            {
+                <th>Comprador</th>
+            }
+            @if (type == "Payout")
+            {
+                <th>Motivo da Falha</th>
+                <th>Comprovante</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            if (item is AirbnbShopApi.Models.Transaction pt)
+            {
+                <tr>
+                    <td>@pt.Id</td>
+                    <td>@pt.Product.Name</td>
+                    <td>R$@pt.Amount</td>
+                    <td>@pt.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@pt.PaymentStatus</td>
+                    <td>@pt.BuyerTelegramId</td>
+                </tr>
+            }
+            else if (item is AirbnbShopApi.Models.AdminTransaction at)
+            {
+                <tr>
+                    <td>@at.Id</td>
+                    <td>@at.Apartment.Name</td>
+                    <td>R$@at.Amount</td>
+                    <td>@at.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@at.Status</td>
+                    <td>@at.FailureReason</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(at.ReceiptUrl))
+                        {
+                            <a href="data:image/jpeg;base64,@at.ReceiptUrl" target="_blank">Ver</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('exportCsvButton').addEventListener('click', function () {
+            var startDate = document.querySelector('input[name="startDate"]').value;
+            var endDate = document.querySelector('input[name="endDate"]').value;
+            var status = document.querySelector('select[name="status"]').value;
+            var type = document.querySelector('select[name="type"]').value;
+
+            var url = '@Url.Action("TransactionReport", "Financial")' + 
+                '?startDate=' + encodeURIComponent(startDate) + 
+                '&endDate=' + encodeURIComponent(endDate) + 
+                '&status=' + encodeURIComponent(status) + 
+                '&type=' + encodeURIComponent(type);
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'text/csv'
+                }
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `Relatorio_${type}_${new Date().toISOString().slice(0,10).replace(/-/g, '')}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => console.error('Erro ao exportar CSV:', error));
+        });
+    </script>
+}

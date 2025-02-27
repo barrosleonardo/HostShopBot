@@ -1,0 +1,103 @@
+@{
+    ViewData["Title"] = "Relatórios Financeiros";
+    var totalBalance = ViewBag.TotalBalance as decimal?;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Saldo Total dos Apartamentos</h3>
+<p>Saldo Consolidado: R$@totalBalance?.ToString("F2")</p>
+
+<h3>Relatório de Transações</h3>
+<form asp-action="TransactionReport" method="get">
+    <div class="form-group">
+        <label>Data Inicial</label>
+        <input type="datetime-local" name="startDate" class="form-control" value="@(ViewBag.StartDate?.ToString("yyyy-MM-ddTHH:mm"))" />
+    </div>
+    <div class="form-group">
+        <label>Data Final</label>
+        <input type="datetime-local" name="endDate" class="form-control" value="@(ViewBag.EndDate?.ToString("yyyy-MM-ddTHH:mm"))" />
+    </div>
+    <div class="form-group">
+        <label>Status</label>
+        <select name="status" class="form-control">
+            <option value="">Todos</option>
+            <option value="Pending" selected="@(ViewBag.Status == "Pending")">Pendente</option>
+            <option value="Confirmed" selected="@(ViewBag.Status == "Confirmed")">Confirmado</option>
+            <option value="Failed" selected="@(ViewBag.Status == "Failed")">Falhou</option>
+            <option value="Solicitado" selected="@(ViewBag.Status == "Solicitado")">Solicitado</option>
+            <option value="Processado" selected="@(ViewBag.Status == "Processado")">Processado</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Tipo</label>
+        <select name="type" class="form-control">
+            <option value="Product" selected="@(ViewBag.Type == "Product")">Pagamentos de Produtos</option>
+            <option value="Payout" selected="@(ViewBag.Type == "Payout")">Solicitações de Payout</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <a href="@Url.Action("TransactionReport", new { startDate = ViewBag.StartDate, endDate = ViewBag.EndDate, status = ViewBag.Status, type = ViewBag.Type })" class="btn btn-secondary" onclick="this.setAttribute('accept', 'text/csv');">Exportar CSV</a>
+</form>
+
+@if (Model != null)
+{
+    <h4>Resultados</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>@(ViewBag.Type == "Product" ? "Produto" : "Apartamento")</th>
+                <th>Valor</th>
+                <th>Data</th>
+                <th>Status</th>
+                @if (ViewBag.Type == "Payout")
+                {
+                    <th>Motivo da Falha</th>
+                    <th>Comprovante</th>
+                }
+                @if (ViewBag.Type == "Product")
+                {
+                    <th>Comprador</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model)
+            {
+                if (transaction is Transaction pt)
+                {
+                    <tr>
+                        <td>@pt.Id</td>
+                        <td>@pt.Product.Name</td>
+                        <td>R$@pt.Amount</td>
+                        <td>@pt.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@pt.PaymentStatus</td>
+                        <td>@pt.BuyerTelegramId</td>
+                    </tr>
+                }
+                else if (transaction is AdminTransaction at)
+                {
+                    <tr>
+                        <td>@at.Id</td>
+                        <td>@at.Apartment.Name</td>
+                        <td>R$@at.Amount</td>
+                        <td>@at.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@at.Status</td>
+                        <td>@at.FailureReason</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(at.ReceiptUrl))
+                            {
+                                <a href="data:image/jpeg;base64,@at.ReceiptUrl" target="_blank">Ver</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

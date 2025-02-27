@@ -1,0 +1,20 @@
+  Determinando os projetos a serem restaurados...
+  Todos os projetos estão atualizados para restauração.
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Reconciliation/ViewProtocol.cshtml(24,57): warning CS8604: Possível argumento de referência nula para o parâmetro 'userId' em 'Task<ApplicationUser?> UserManager<ApplicationUser>.FindByIdAsync(string userId)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Reconciliation/OpenProtocol.cshtml(60,55): warning CS8629: O tipo de valor de nulidade pode ser nulo. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/ReconciliationController.cs(173,44): warning CS8604: Possível argumento de referência nula para o parâmetro 'userId' em 'IClientProxy IHubClients<IClientProxy>.User(string userId)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/ReconciliationController.cs(199,44): warning CS8604: Possível argumento de referência nula para o parâmetro 'userId' em 'IClientProxy IHubClients<IClientProxy>.User(string userId)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/AdminIndex.cshtml(138,282): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+  AirbnbShopApi -> /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/bin/Debug/net9.0/AirbnbShopApi.dll
+
+Compilação com êxito.
+
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Reconciliation/ViewProtocol.cshtml(24,57): warning CS8604: Possível argumento de referência nula para o parâmetro 'userId' em 'Task<ApplicationUser?> UserManager<ApplicationUser>.FindByIdAsync(string userId)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Reconciliation/OpenProtocol.cshtml(60,55): warning CS8629: O tipo de valor de nulidade pode ser nulo. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/ReconciliationController.cs(173,44): warning CS8604: Possível argumento de referência nula para o parâmetro 'userId' em 'IClientProxy IHubClients<IClientProxy>.User(string userId)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Controllers/ReconciliationController.cs(199,44): warning CS8604: Possível argumento de referência nula para o parâmetro 'userId' em 'IClientProxy IHubClients<IClientProxy>.User(string userId)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/AdminIndex.cshtml(138,282): warning CS8602: Desreferência de uma referência possivelmente nula. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+    5 Aviso(s)
+    0 Erro(s)
+
+Tempo Decorrido 00:00:02.51

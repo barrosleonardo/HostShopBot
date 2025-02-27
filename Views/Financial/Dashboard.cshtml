@@ -1,0 +1,111 @@
+@{
+    ViewData["Title"] = "Dashboard Financeiro";
+    var totalBalance = ViewBag.TotalBalance as decimal?;
+    var pendingTransactions = ViewBag.PendingTransactions as int?;
+    var pendingPayouts = ViewBag.PendingPayouts as int?;
+    var productTransactions = ViewBag.ProductTransactions as List<dynamic> ?? new List<dynamic>();
+    var payoutTransactions = ViewBag.PayoutTransactions as List<dynamic> ?? new List<dynamic>();
+    var startDate = ViewBag.StartDate as DateTime?;
+    var endDate = ViewBag.EndDate as DateTime?;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Dashboard" method="get">
+    <div class="form-group">
+        <label>Data Inicial</label>
+        <input type="datetime-local" name="startDate" class="form-control" value="@(startDate.HasValue ? startDate.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+    <div class="form-group">
+        <label>Data Final</label>
+        <input type="datetime-local" name="endDate" class="form-control" value="@(endDate.HasValue ? endDate.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<div class="row mt-3">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Saldo Total</h5>
+                <p class="card-text">R$@totalBalance?.ToString("F2")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Transações Pendentes</h5>
+                <p class="card-text">@pendingTransactions</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Payouts Pendentes</h5>
+                <p class="card-text">@pendingPayouts</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Transações de Produtos</h3>
+        <canvas id="productChart" width="400" height="200"></canvas>
+    </div>
+    <div class="col-md-6">
+        <h3>Solicitações de Payout</h3>
+        <canvas id="payoutChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var productData = {
+            labels: [@Html.Raw(productTransactions.Any() ? string.Join(",", productTransactions.Select(t => $"'{t.Date:yyyy-MM-dd}'")) : "''")],
+            datasets: [{
+                label: 'Valor de Transações (R$)',
+                data: [@Html.Raw(productTransactions.Any() ? string.Join(",", productTransactions.Select(t => t.Total)) : "0")],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        var payoutData = {
+            labels: [@Html.Raw(payoutTransactions.Any() ? string.Join(",", payoutTransactions.Select(t => $"'{t.Date:yyyy-MM-dd}'")) : "''")],
+            datasets: [{
+                label: 'Valor de Payouts (R$)',
+                data: [@Html.Raw(payoutTransactions.Any() ? string.Join(",", payoutTransactions.Select(t => t.Total)) : "0")],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        var productCtx = document.getElementById('productChart').getContext('2d');
+        var productChart = new Chart(productCtx, {
+            type: 'bar',
+            data: productData,
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        var payoutCtx = document.getElementById('payoutChart').getContext('2d');
+        var payoutChart = new Chart(payoutCtx, {
+            type: 'bar',
+            data: payoutData,
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+}

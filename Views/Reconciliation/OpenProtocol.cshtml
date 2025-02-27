@@ -1,0 +1,68 @@
+@model AirbnbShopApi.Models.ReconciliationProtocol
+
+@{
+    ViewData["Title"] = "Abrir Protocolo de Conciliação";
+    var transactionId = ViewBag.TransactionId as int? ?? 0;
+    var type = ViewBag.Type as ReconciliationType? ?? (ReconciliationType?)null;
+    var hasParams = transactionId > 0 && type.HasValue;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="OpenProtocol" method="post">
+    <input type="hidden" name="transactionId" value="@transactionId" />
+    <div class="form-group">
+        <label>Transação</label>
+        <input type="number" class="form-control" value="@transactionId" disabled="@(hasParams ? "disabled" : null)" readonly />
+        @if (!hasParams)
+        {
+            <input type="hidden" name="transactionId" value="@transactionId" />
+        }
+    </div>
+    <div class="form-group">
+        <label>Tipo de Protocolo</label>
+        <select name="type" class="form-control" @(hasParams ? "disabled" : null) required>
+            @if (type == ReconciliationType.Produtos)
+            {
+                <option value="1" selected>Produtos</option>
+            }
+            else
+            {
+                <option value="1">Produtos</option>
+            }
+            @if (type == ReconciliationType.Payout)
+            {
+                <option value="2" selected>Payout</option>
+            }
+            else
+            {
+                <option value="2">Payout</option>
+            }
+            @if (type == ReconciliationType.Duvidas)
+            {
+                <option value="3" selected>Dúvidas</option>
+            }
+            else
+            {
+                <option value="3">Dúvidas</option>
+            }
+            @if (type == ReconciliationType.Outros)
+            {
+                <option value="4" selected>Outros</option>
+            }
+            else
+            {
+                <option value="4">Outros</option>
+            }
+        </select>
+        @if (hasParams)
+        {
+            <input type="hidden" name="type" value="@((int)type)" />
+        }
+    </div>
+    <div class="form-group">
+        <label>Comentário Inicial</label>
+        <textarea name="initialComment" class="form-control" rows="4"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Abrir Protocolo</button>
+</form>

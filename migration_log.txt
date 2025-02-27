@@ -1,0 +1,50 @@
+Using project '/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj'.
+Using startup project '/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj'.
+dotnet msbuild /target:GetEFProjectMetadata /property:EFProjectMetadataFile=/var/folders/yz/49mtpngs1hldrx6n96tlr6gm0000gn/T/tmpO5Q5Oi.tmp /verbosity:quiet /nologo /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj
+dotnet msbuild /target:GetEFProjectMetadata /property:EFProjectMetadataFile=/var/folders/yz/49mtpngs1hldrx6n96tlr6gm0000gn/T/tmp1rEGvY.tmp /verbosity:quiet /nologo /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj
+Build started...
+dotnet build /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj /verbosity:quiet /nologo /p:PublishAot=false
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Program.cs(10,22): warning CS8604: Possível argumento de referência nula para o parâmetro 'connectionString' em 'DbContextOptionsBuilder MySQLDbContextOptionsExtensions.UseMySQL(DbContextOptionsBuilder optionsBuilder, string connectionString, Action<MySQLDbContextOptionsBuilder>? mySqlOptionsAction = null)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+
+Compilação com êxito.
+
+/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Program.cs(10,22): warning CS8604: Possível argumento de referência nula para o parâmetro 'connectionString' em 'DbContextOptionsBuilder MySQLDbContextOptionsExtensions.UseMySQL(DbContextOptionsBuilder optionsBuilder, string connectionString, Action<MySQLDbContextOptionsBuilder>? mySqlOptionsAction = null)'. [/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj]
+    1 Aviso(s)
+    0 Erro(s)
+
+Tempo Decorrido 00:00:05.81
+
+Build succeeded.
+dotnet exec --depsfile /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/bin/Debug/net9.0/AirbnbShopApi.deps.json --additionalprobingpath /Users/leo/.nuget/packages --runtimeconfig /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/bin/Debug/net9.0/AirbnbShopApi.runtimeconfig.json /Users/leo/.dotnet/tools/.store/dotnet-ef/9.0.1/dotnet-ef/9.0.1/tools/net8.0/any/tools/netcoreapp2.0/any/ef.dll migrations add InitialCreateWithModels --assembly /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/bin/Debug/net9.0/AirbnbShopApi.dll --project /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj --startup-assembly /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/bin/Debug/net9.0/AirbnbShopApi.dll --startup-project /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/AirbnbShopApi.csproj --project-dir /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/ --root-namespace AirbnbShopApi --language C# --framework net9.0 --nullable --working-dir /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi --verbose
+Using assembly 'AirbnbShopApi'.
+Using startup assembly 'AirbnbShopApi'.
+Using application base '/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/bin/Debug/net9.0'.
+Using working directory '/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi'.
+Using root namespace 'AirbnbShopApi'.
+Using project directory '/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/'.
+Remaining arguments: .
+Finding DbContext classes...
+Finding IDesignTimeDbContextFactory implementations...
+Found IDesignTimeDbContextFactory implementation 'AppDbContextFactory'.
+Found DbContext 'AppDbContext'.
+Finding application service provider in assembly 'AirbnbShopApi'...
+Finding Microsoft.Extensions.Hosting service provider...
+Using environment 'Development'.
+Using application service provider from Microsoft.Extensions.Hosting.
+Finding DbContext classes in the project...
+Using DbContext factory 'AppDbContextFactory'.
+Using context 'AppDbContext'.
+Finding design-time services referenced by assembly 'AirbnbShopApi'...
+Finding design-time services referenced by assembly 'AirbnbShopApi'...
+No referenced design-time services were found.
+Finding design-time services for provider 'MySql.EntityFrameworkCore'...
+Using design-time services from provider 'MySql.EntityFrameworkCore'.
+Finding IDesignTimeServices implementations in assembly 'AirbnbShopApi'...
+No design-time services were found.
+The index {'UserId'} was not created on entity type 'UserApartment' as the properties are already covered by the index {'UserId', 'ApartmentId'}.
+The index {'UserId'} was not created on entity type 'IdentityUserRole<string>' as the properties are already covered by the index {'UserId', 'RoleId'}.
+The index {'UserId'} was not created on entity type 'IdentityUserToken<string>' as the properties are already covered by the index {'UserId', 'LoginProvider', 'Name'}.
+Writing migration to '/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Migrations/20250223104442_InitialCreateWithModels.cs'.
+Writing model snapshot to '/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Migrations/AppDbContextModelSnapshot.cs'.
+'AppDbContext' disposed.
+Done. To undo this action, use 'ef migrations remove'

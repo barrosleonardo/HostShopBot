@@ -1,0 +1,26 @@
+@model object
+
+@{
+    ViewData["Title"] = "Selecionar Apartamento";
+    var userApartments = ViewBag.UserApartments as List<AirbnbShopApi.Models.Apartment> ?? new List<AirbnbShopApi.Models.Apartment>();
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="IndexOwner" method="get">
+            <div class="form-group">
+                <label>Selecione um Apartamento</label>
+                <select name="selectedApartmentId" class="form-control" required>
+                    <option value="">-- Escolha um apartamento --</option>
+                    @foreach (var apartment in userApartments)
+                    {
+                        <option value="@apartment.Id">@apartment.Name (Saldo: R$@apartment.Balance.ToString("N2"))</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Visualizar Dashboard</button>
+        </form>
+    </div>
+</div>

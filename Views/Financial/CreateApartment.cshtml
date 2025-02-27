@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Criar Apartamento";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="CreateApartment" method="post">
+    <div class="form-group">
+        <label>Nome</label>
+        <input name="name" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Identificador</label>
+        <input name="identifier" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label>Saldo Inicial</label>
+        <input name="balance" class="form-control" type="number" step="0.01" required />
+    </div>
+    <div class="form-group">
+        <label>Chave Pix</label>
+        <input name="pixKey" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Criar</button>
+</form>

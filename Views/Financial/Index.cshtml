@@ -1,0 +1,120 @@
+@model IEnumerable<AirbnbShopApi.Models.AdminTransaction>
+
+@{
+    ViewData["Title"] = "Meus Pedidos de Recebimento";
+    var userApartments = ViewBag.UserApartments as List<AirbnbShopApi.Models.Apartment>;
+    var page = ViewBag.Page as int? ?? 1;
+    var totalPages = ViewBag.TotalPages as int? ?? 1;
+    var retentionRate = ViewBag.RetentionRate as decimal? ?? 0.1m; // Taxa de retenção do ViewBag
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<h3>Solicitar Recebimento</h3>
+<form id="payoutForm" asp-action="RequestPayout" method="post" onsubmit="return confirmPayout()">
+    <div class="form-group">
+        <label>Apartamento</label>
+        <select name="apartmentId" class="form-control">
+            @foreach (var apartment in userApartments!)
+            {
+                <option value="@apartment.Id">@apartment.Name (Saldo: R$@apartment.Balance.ToString("N2"))</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Valor</label>
+        <input name="amountStr" class="form-control" type="text" placeholder="Ex: 20,50 ou 20.50" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Solicitar</button>
+</form>
+
+<h3>Meus Pedidos de Recebimento</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Apartamento</th>
+        <th>Valor Bruto</th>
+        <th>Valor Líquido</th>
+        <th>Chave Pix</th>
+        <th>Data da Solicitação</th>
+        <th>Status</th>
+        <th>Motivo da Falha</th>
+        <th>Comprovante</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var transaction in Model)
+    {
+        <tr>
+            <td>@transaction.Apartment.Name</td>
+            <td>R$@transaction.Amount.ToString("N2")</td>
+            <td>R$@transaction.NetAmount.ToString("N2")</td>
+            <td>@transaction.PixKey</td>
+            <td>@transaction.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@transaction.Status</td>
+            <td>@transaction.FailureReason</td>
+            <td>
+                @if (!string.IsNullOrEmpty(transaction.ReceiptUrl))
+                {
+                    <a href="@transaction.ReceiptUrl" target="_blank">Ver</a>
+                }
+                else
+                {
+                    @:N/A
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<nav aria-label="Paginação">
+    <ul class="pagination">
+        <li class="page-item @(page == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { page = page - 1 })" aria-label="Anterior">
+                <span aria-hidden="true">«</span>
+            </a>
+        </li>
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == page ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+            </li>
+        }
+        <li class="page-item @(page == totalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Index", new { page = page + 1 })" aria-label="Próximo">
+                <span aria-hidden="true">»</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function confirmPayout() {
+            var amountInput = document.querySelector('input[name="amountStr"]');
+            if (!amountInput || !amountInput.value) {
+                alert("Por favor, insira um valor válido antes de continuar.");
+                return false;
+            }
+
+            var amountStr = amountInput.value.replace(",", ".");
+            var amount = parseFloat(amountStr);
+            if (isNaN(amount) || amount <= 0) {
+                alert("Por favor, insira um valor válido maior que zero (ex.: 20,50 ou 20.50).");
+                return false;
+            }
+
+            var retentionRate = @Html.Raw(Json.Serialize(retentionRate));
+            var netAmount = amount * (1 - retentionRate);
+            var confirmation = confirm("Você está solicitando um recebimento de R$ " + amount.toFixed(2) + ". Após a taxa de retenção de " + (retentionRate * 100).toFixed(2) + "%, você receberá R$ " + netAmount.toFixed(2) + ". Deseja continuar?");
+            return confirmation;
+        }
+    </script>
+}

@@ -1,0 +1,49 @@
+@inject Microsoft.AspNetCore.Identity.UserManager<AirbnbShopApi.Models.ApplicationUser> UserManager
+
+@model AirbnbShopApi.Models.ReconciliationProtocol
+
+@{
+    ViewData["Title"] = "Visualizar Protocolo de Conciliação";
+    var isFinancial = User.IsInRole("Financeiro"); // Alterado para IsInRole
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div>
+    <h4>Protocolo #@Model.Id</h4>
+    <p><strong>Transação:</strong> @Model.TransactionId</p>
+    <p><strong>Tipo:</strong> @Model.Type</p>
+    <p><strong>Estado:</strong> @Model.Status</p>
+    <p><strong>Criado em:</strong> @Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</p>
+</div>
+
+<h3>Comentários</h3>
+<ul>
+    @foreach (var comment in Model.Comments)
+    {
+        var commenter = await UserManager.FindByIdAsync(comment.UserId);
+        <li>
+            <strong>@(commenter?.UserName ?? "Usuário Desconhecido")</strong> (@comment.CommentDate.ToString("dd/MM/yyyy HH:mm")): @comment.Comment
+        </li>
+    }
+</ul>
+
+@if (Model.Status != AirbnbShopApi.Models.ProtocolStatus.Fechado)
+{
+    <form asp-action="AddComment" method="post">
+        <input type="hidden" name="protocolId" value="@Model.Id" />
+        <div class="form-group">
+            <label>Adicionar Comentário</label>
+            <textarea name="comment" class="form-control" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar Comentário</button>
+    </form>
+
+    @if (isFinancial)
+    {
+        <form asp-action="CloseProtocol" method="post" style="display:inline;">
+            <input type="hidden" name="protocolId" value="@Model.Id" />
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja fechar este protocolo?');">Fechar Protocolo</button>
+        </form>
+    }
+}

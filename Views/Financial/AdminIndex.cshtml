@@ -1,0 +1,353 @@
+@model IEnumerable<AirbnbShopApi.Models.AdminTransaction>
+
+@using System.Text.Json
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Gestão Financeira";
+    var userApartments = ViewBag.UserApartments as List<AirbnbShopApi.Models.Apartment>;
+    var users = ViewBag.Users as List<ApplicationUser>;
+    var allApartments = ViewBag.AllApartments as List<Apartment>;
+    var productTransactions = ViewBag.ProductTransactions as List<Transaction>;
+    var productPage = ViewBag.ProductPage as int? ?? 1;
+    var productTotalPages = ViewBag.ProductTotalPages as int? ?? 1;
+    var payoutPage = ViewBag.PayoutPage as int? ?? 1;
+    var payoutTotalPages = ViewBag.PayoutTotalPages as int? ?? 1;
+    var apartmentPage = ViewBag.ApartmentPage as int? ?? 1;
+    var apartmentTotalPages = ViewBag.ApartmentTotalPages as int? ?? 1;
+    var userPage = ViewBag.UserPage as int? ?? 1;
+    var userTotalPages = ViewBag.UserTotalPages as int? ?? 1;
+    var retentionRate = ViewBag.RetentionRate as decimal? ?? 0.05m; // Taxa de retenção do ViewBag (5% como exemplo)
+    var payoutTransactions = ViewBag.PayoutTransactions as List<dynamic> ?? new List<dynamic>();
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Transações de Pagamento de Produtos</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Produto</th>
+        <th>Comprador</th>
+        <th>Valor</th>
+        <th>ID do Pagamento</th>
+        <th>Status</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var transaction in productTransactions!)
+    {
+        <tr>
+            <td>@transaction.Product.Name</td>
+            <td>@transaction.BuyerTelegramId</td>
+            <td>R$@transaction.Amount.ToString("N2")</td>
+            <td>@transaction.PaymentId</td>
+            <td>@transaction.PaymentStatus</td>
+            <td>
+                @if (transaction.PaymentStatus == "Pending" && transaction.PaymentId.StartsWith("PIX_"))
+                {
+                    <form asp-action="ConfirmPayment" asp-route-transactionId="@transaction.Id" method="post" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja aprovar este pagamento?');">
+                        <button type="submit" class="btn btn-sm btn-primary">Confirmar</button>
+                    </form>
+                    <form asp-action="RejectPayment" asp-route-transactionId="@transaction.Id" method="post" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja rejeitar este pagamento?');">
+                        <input type="text" name="rejectionReason" class="form-control d-inline" style="width:150px;" placeholder="Motivo da rejeição" required />
+                        <button type="submit" class="btn btn-sm btn-danger">Rejeitar</button>
+                    </form>
+                }
+                else if (transaction.PaymentStatus == "Pending")
+                {
+                    <span>Processando automaticamente...</span>
+                }
+                @if (!string.IsNullOrEmpty(transaction.RejectionReason))
+                {
+                    <span>(Motivo da rejeição: @transaction.RejectionReason)</span>
+                }
+                <a href="@Url.Action("OpenProtocol", "Reconciliation", new { transactionId = transaction.Id, type = 1 })" target="_blank" class="btn btn-sm btn-warning">Conciliar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<nav aria-label="Paginação de Transações de Produtos">
+    <ul class="pagination">
+        <li class="page-item @(productPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage = productPage - 1, payoutPage, apartmentPage, userPage })" aria-label="Anterior">
+                <span aria-hidden="true">«</span>
+            </a>
+        </li>
+        @for (int i = 1; i <= productTotalPages; i++)
+        {
+            <li class="page-item @(i == productPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("AdminIndex", new { productPage = i, payoutPage, apartmentPage, userPage })">@i</a>
+            </li>
+        }
+        <li class="page-item @(productPage == productTotalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage = productPage + 1, payoutPage, apartmentPage, userPage })" aria-label="Próximo">
+                <span aria-hidden="true">»</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<br/><br/>
+
+<h3>Solicitações de Payout</h3>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Apartamento</th>
+        <th>Valor Bruto</th>
+        <th>Taxa de Retenção (@(retentionRate * 100)%)</th>
+        <th>Valor Líquido</th>
+        <th>Chave Pix</th>
+        <th>Data da Solicitação</th>
+        <th>Status</th>
+        <th>Motivo da Falha</th>
+        <th>Comprovante</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var transaction in Model)
+    {
+        <tr>
+            <td>@transaction.Apartment?.Name</td>
+            <td>R$@transaction.Amount.ToString("N2")</td>
+            <td>R$@transaction.RetentionAmount.ToString("N2")</td>
+            <td>R$@transaction.NetAmount.ToString("N2")</td>
+            <td>@transaction.PixKey</td>
+            <td>@transaction.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@transaction.Status</td>
+            <td>@transaction.FailureReason</td>
+            <td>
+                @if (!string.IsNullOrEmpty(transaction.ReceiptUrl))
+                {
+                    <a href="@transaction.ReceiptUrl" target="_blank">Ver</a>
+                }
+                else
+                {
+                    @:N/A
+                }
+            </td>
+            <td>
+                @if (transaction.Status == PayoutStatus.Solicitado)
+                {
+                    <form id="approveForm_@transaction.Id" asp-action="ApprovePayout" asp-route-transactionId="@transaction.Id" method="post" enctype="multipart/form-data" style="display:inline;">
+                        <input type="file" name="receipt" accept="image/*" class="form-control d-inline" style="width:150px;" />
+                        <button type="button" class="btn btn-sm btn-success" onclick="return confirmApprovePayout(@transaction.Id, '@transaction.Amount.ToString("F2", CultureInfo.InvariantCulture)', '@transaction.NetAmount.ToString("F2", CultureInfo.InvariantCulture)', '@Html.Raw(Json.Serialize(transaction.Apartment?.Name ?? "").ToString().Replace("\"", ""))');">Aprovar</button>
+                    </form>
+                    <form asp-action="RejectPayout" asp-route-transactionId="@transaction.Id" method="post" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja rejeitar este payout?');">
+                        <input type="text" name="failureReason" placeholder="Motivo da rejeição" class="form-control d-inline" style="width:150px;" required />
+                        <button type="submit" class="btn btn-sm btn-danger">Rejeitar</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<nav aria-label="Paginação de Solicitações de Payout">
+    <ul class="pagination">
+        <li class="page-item @(payoutPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage = payoutPage - 1, apartmentPage, userPage })" aria-label="Anterior">
+                <span aria-hidden="true">«</span>
+            </a>
+        </li>
+        @for (int i = 1; i <= payoutTotalPages; i++)
+        {
+            <li class="page-item @(i == payoutPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage = i, apartmentPage, userPage })">@i</a>
+            </li>
+        }
+        <li class="page-item @(payoutPage == payoutTotalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage = payoutPage + 1, apartmentPage, userPage })" aria-label="Próximo">
+                <span aria-hidden="true">»</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<br/><br/>
+
+<h3>Gerenciamento de Usuários e Apartamentos</h3>
+<a asp-action="CreateUser" class="btn btn-success">Criar Usuário</a>
+<a asp-action="CreateApartment" class="btn btn-success">Criar Apartamento</a>
+
+<h4>Apartamentos</h4>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>Identificador</th>
+        <th>Saldo</th>
+        <th>Chave Pix</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var apartment in allApartments!)
+    {
+        <tr>
+            <td>@apartment.Name</td>
+            <td>@apartment.Identifier</td>
+            <td>R$@apartment.Balance.ToString("N2")</td>
+            <td>@apartment.PixKey</td>
+            <td>
+                <a asp-action="EditApartment" asp-route-id="@apartment.Id" class="btn btn-sm btn-primary">Editar</a>
+                <form asp-action="DeleteApartment" asp-route-id="@apartment.Id" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja apagar este apartamento?');">Apagar</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<nav aria-label="Paginação de Apartamentos">
+    <ul class="pagination">
+        <li class="page-item @(apartmentPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage, apartmentPage = apartmentPage - 1, userPage })" aria-label="Anterior">
+                <span aria-hidden="true">«</span>
+            </a>
+        </li>
+        @for (int i = 1; i <= apartmentTotalPages; i++)
+        {
+            <li class="page-item @(i == apartmentPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage, apartmentPage = i, userPage })">@i</a>
+            </li>
+        }
+        <li class="page-item @(apartmentPage == apartmentTotalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage, apartmentPage = apartmentPage + 1, userPage })" aria-label="Próximo">
+                <span aria-hidden="true">»</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<br/><br/>
+
+<h4>Usuários</h4>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Usuário</th>
+        <th>Email</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in users!)
+    {
+        <tr>
+            <td>@user.UserName</td>
+            <td>@user.Email</td>
+            <td>
+                <a asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-sm btn-primary">Editar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+<nav aria-label="Paginação de Usuários">
+    <ul class="pagination">
+        <li class="page-item @(userPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage, apartmentPage, userPage = userPage - 1 })" aria-label="Anterior">
+                <span aria-hidden="true">«</span>
+            </a>
+        </li>
+        @for (int i = 1; i <= userTotalPages; i++)
+        {
+            <li class="page-item @(i == userPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage, apartmentPage, userPage = i })">@i</a>
+            </li>
+        }
+        <li class="page-item @(userPage == userTotalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("AdminIndex", new { productPage, payoutPage, apartmentPage, userPage = userPage + 1 })" aria-label="Próximo">
+                <span aria-hidden="true">»</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<br/><br/>
+
+<h4>Vincular Usuário a Apartamento</h4>
+<form asp-action="LinkUserToApartment" method="post">
+    <div class="form-group">
+        <label>Usuário</label>
+        <select name="userId" class="form-control">
+            @foreach (var user in users!)
+            {
+                <option value="@user.Id">@user.UserName</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Apartamento</label>
+        <select name="apartmentId" class="form-control">
+            @foreach (var apartment in allApartments!)
+            {
+                <option value="@apartment.Id">@apartment.Name</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Vincular</button>
+</form>
+
+<br/><br/>
+
+<h4>Gerenciar Taxa de Retenção</h4>
+<form asp-action="UpdateRetentionRate" method="post">
+    <div class="form-group">
+        <label>Taxa de Retenção (ex.: 0.05 para 5%)</label>
+        <input name="rate" class="form-control" type="number" step="0.01" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Atualizar Taxa</button>
+</form>
+
+@section Scripts {
+    <script>
+        console.log("Scripts carregados com sucesso!");
+
+        function confirmPayout() {
+            var amountInput = document.querySelector('input[name="amount"]');
+            if (!amountInput || !amountInput.value) {
+                alert("Por favor, insira um valor válido antes de continuar.");
+                return false;
+            }
+
+            var amount = parseFloat(amountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                alert("Por favor, insira um valor válido maior que zero.");
+                return false;
+            }
+
+            var retentionRate = @Html.Raw(Json.Serialize(retentionRate));
+            var netAmount = amount * (1 - retentionRate);
+            var confirmation = confirm("Você está solicitando um recebimento de R$ " + amount.toFixed(2) + ". Após a taxa de retenção de " + (retentionRate * 100).toFixed(2) + "%, você receberá R$ " + netAmount.toFixed(2) + ". Deseja continuar?");
+            return confirmation;
+        }
+
+        function confirmApprovePayout(transactionId, amount, netAmount, apartmentName) {
+            console.log("Confirm Approve Payout - TransactionId:", transactionId);
+            console.log("Amount:", amount);
+            console.log("NetAmount:", netAmount);
+            console.log("ApartmentName:", apartmentName);
+
+            amount = parseFloat(amount);
+            netAmount = parseFloat(netAmount);
+
+            if (isNaN(amount) || isNaN(netAmount)) {
+                alert("Erro: Valores inválidos para o payout. Por favor, contate o suporte.");
+                return false;
+            }
+
+            var confirmation = confirm("Você está aprovando um payout de R$ " + amount.toFixed(2) + " para o " + apartmentName + ". O valor líquido a ser enviado ao proprietário é R$ " + netAmount.toFixed(2) + ". Deseja continuar?");
+            if (confirmation) {
+                document.getElementById('approveForm_' + transactionId).submit();
+            }
+            return false;
+        }
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

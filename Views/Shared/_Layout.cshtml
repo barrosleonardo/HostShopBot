@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AirbnbShopApi</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .menu-link {
+            color: #007bff !important;
+            font-weight: bold;
+        }
+        .menu-separator {
+            color: #ffffff;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/">AirbnbShopApi</a>
+                <div class="navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Olá, @User.Identity.Name</a>
+                            </li>
+                            <li class="nav-item">
+                                <span class="menu-separator">|</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@(User.IsInRole("Financeiro") ? "/Financial/AdminIndex" : "/Financial/Index")">Financeiro</a>
+                            </li>
+                            <li class="nav-item">
+                                <span class="menu-separator">|</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="/Home/Index">Produtos</a>
+                            </li>
+                            <li class="nav-item">
+                                <span class="menu-separator">|</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="@(User.IsInRole("Financeiro") ? "/Dashboard/Index" : "/Dashboard/IndexOwner")">Dashboard</a>
+                            </li>
+                            @if (User.IsInRole("Financeiro"))
+                            {
+                                <li class="nav-item">
+                                    <span class="menu-separator">|</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link menu-link" href="/Financial/Reports">Relatórios</a>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="menu-separator">|</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link menu-link" href="/Financial/AuditLog">Logs de Auditoria</a>
+                                </li>
+                            }
+                            <li class="nav-item">
+                                <span class="menu-separator">|</span>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="form-inline">
+                                    <button type="submit" class="nav-link btn btn-link text-white">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Identity" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            © 2025 - AirbnbShopApi
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

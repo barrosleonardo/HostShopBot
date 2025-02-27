@@ -1,0 +1,186 @@
+﻿@model IEnumerable<AirbnbShopApi.Models.Apartment>
+
+@{
+    ViewData["Title"] = "Gerenciamento de Apartamentos";
+    var apartments = ViewBag.Apartments as List<AirbnbShopApi.Models.Apartment>;
+    var selectedApartmentId = ViewBag.SelectedApartmentId as int?;
+    var selectedApartment = apartments?.FirstOrDefault(a => a.Id == selectedApartmentId);
+    var transactions = ViewBag.Transactions as List<AirbnbShopApi.Models.Transaction>;
+    var transactionsPage = ViewBag.TransactionsPage as int? ?? 1;
+    var transactionsTotalPages = ViewBag.TransactionsTotalPages as int? ?? 1;
+    var retentionFee = ViewBag.RetentionFee as decimal? ?? 0.1m;
+    var retentionAmount = ViewBag.RetentionAmount as decimal? ?? 0m;
+    var netBalance = ViewBag.NetBalance as decimal? ?? 0m;
+    var culture = new System.Globalization.CultureInfo("pt-BR");
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="form-group">
+    <label>Selecionar Apartamento</label>
+    <select class="form-control" onchange="location.href='@Url.Action("Index")?selectedApartmentId='+this.value">
+        @foreach (var apartment in apartments!)
+        {
+            if (apartment.Id == selectedApartmentId)
+            {
+                <option value="@apartment.Id" selected>@apartment.Name</option>
+            }
+            else
+            {
+                <option value="@apartment.Id">@apartment.Name</option>
+            }
+        }
+    </select>
+</div>
+
+@if (selectedApartment != null)
+{
+    <h3>@selectedApartment.Name</h3>
+    <p>Saldo Bruto: R$ @selectedApartment.Balance.ToString("N2", culture)</p>
+    <p>Taxa de Retenção: @(retentionFee * 100m)% (R$ @retentionAmount.ToString("N2", culture))</p>
+    <p>Saldo Líquido Disponível: R$ @netBalance.ToString("N2", culture)</p>
+
+    <h4>Produtos</h4>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Código do Cadeado</th>
+            <th>Status</th>
+            <th>Imagem</th>
+            <th>Último Comprador</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var product in selectedApartment.Products)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>R$ @product.Price.ToString("N2", culture)</td>
+                <td>@product.LockCode</td>
+                <td>@(product.IsAvailable ? "Disponível" : "Vendido")</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="@product.ImageUrl" alt="Imagem do Produto" style="max-width: 50px; max-height: 50px;" />
+                    }
+                    else
+                    {
+                        @:Sem imagem
+                    }
+                </td>
+                <td>
+                    @if (product.Transactions.Any())
+                    {
+                        var latestTransaction = product.Transactions.OrderByDescending(t => t.RequestDate).First();
+                        @latestTransaction.BuyerTelegramId
+                    }
+                    else
+                    {
+                        @:N/A
+                    }
+                </td>
+                <td>
+                    <a asp-action="EditProduct" asp-route-id="@product.Id" class="btn btn-sm btn-primary">Editar</a>
+                    <form asp-action="DeleteProduct" asp-route-id="@product.Id" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja apagar este produto?');">Apagar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <h4>Adicionar Produto</h4>
+    <form id="addProductForm" asp-action="AddProduct" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="apartmentId" value="@selectedApartment.Id" />
+        <div class="form-group">
+            <label>Nome</label>
+            <input name="name" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Descrição</label>
+            <input name="description" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Preço</label>
+            <input id="priceInput" name="priceStr" class="form-control" type="text" required placeholder="Ex: 19.99 ou 19,99" />
+        </div>
+        <div class="form-group">
+            <label>Código do Cadeado</label>
+            <input name="lockCode" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Imagem</label>
+            <input name="image" class="form-control" type="file" accept="image/*" />
+        </div>
+        <button type="submit" class="btn btn-primary">Adicionar</button>
+    </form>
+
+    <script>
+        document.getElementById("addProductForm").addEventListener("submit", function(e) {
+            let priceInput = document.getElementById("priceInput");
+            let value = priceInput.value;
+            value = value.replace(',', '.');
+            priceInput.value = value;
+        });
+    </script>
+
+    <h4>Todas as Transações</h4>
+    @if (transactions != null && transactions.Any())
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Comprador</th>
+                <th>Valor</th>
+                <th>Data da Transação</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var transaction in transactions)
+            {
+                <tr>
+                    <td>@transaction.Product.Name</td>
+                    <td>@transaction.BuyerTelegramId</td>
+                    <td>R$ @transaction.Amount.ToString("N2", culture)</td>
+                    <td>@transaction.RequestDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@transaction.PaymentStatus</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <nav aria-label="Paginação de Transações">
+            <ul class="pagination">
+                <li class="page-item @(transactionsPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { selectedApartmentId, transactionsPage = transactionsPage - 1 })" aria-label="Anterior">
+                        <span aria-hidden="true">«</span>
+                    </a>
+                </li>
+                @for (int i = 1; i <= transactionsTotalPages; i++)
+                {
+                    <li class="page-item @(i == transactionsPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { selectedApartmentId, transactionsPage = i })">@i</a>
+                    </li>
+                }
+                <li class="page-item @(transactionsPage == transactionsTotalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { selectedApartmentId, transactionsPage = transactionsPage + 1 })" aria-label="Próximo">
+                        <span aria-hidden="true">»</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <p>Nenhuma transação registrada neste apartamento.</p>
+    }
+}
+else
+{
+    <p>Nenhum apartamento selecionado.</p>
+}

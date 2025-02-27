@@ -1,0 +1,61 @@
+@model AirbnbShopApi.Models.Product
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Editar Produto";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="EditProduct" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ApartmentId" />
+    <div class="form-group">
+        <label asp-for="Name">Nome</label>
+        <input asp-for="Name" class="form-control" required />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description">Descrição</label>
+        <input asp-for="Description" class="form-control" required />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Price">Preço</label>
+        <input asp-for="Price" class="form-control" type="number" step="0.01" required />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LockCode">Código do Cadeado</label>
+        <input asp-for="LockCode" class="form-control" required />
+        <span asp-validation-for="LockCode" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="IsAvailable">Status</label>
+        <select asp-for="IsAvailable" class="form-control" asp-items="@((List<SelectListItem>)ViewBag.StatusOptions)" required></select>
+        <span asp-validation-for="IsAvailable" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Imagem Atual</label>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div>
+                <img src="@Model.ImageUrl" alt="Imagem do Produto" style="max-width: 200px; max-height: 200px;" />
+            </div>
+        }
+        else
+        {
+            <p>Nenhuma imagem disponível.</p>
+        }
+    </div>
+    <div class="form-group">
+        <label>Substituir Imagem</label>
+        <input name="image" class="form-control" type="file" accept="image/*" />
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" asp-route-selectedApartmentId="@Model.ApartmentId" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

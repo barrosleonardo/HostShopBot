@@ -1,0 +1,121 @@
+is_global = true
+build_property.TargetFramework = net9.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = AirbnbShopApi
+build_property.RootNamespace = AirbnbShopApi
+build_property.ProjectDir = /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 9.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 9.0
+build_property.EnableCodeStyleSeverity = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Dashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGFzaGJvYXJkL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Dashboard/IndexOwner.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGFzaGJvYXJkL0luZGV4T3duZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Dashboard/SelectApartment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRGFzaGJvYXJkL1NlbGVjdEFwYXJ0bWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/AdminIndex.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0FkbWluSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/AuditLog.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0F1ZGl0TG9nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/CreateApartment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0NyZWF0ZUFwYXJ0bWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/CreateUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0NyZWF0ZVVzZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0Rhc2hib2FyZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/EditApartment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0VkaXRBcGFydG1lbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/EditUser.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0VkaXRVc2VyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/Reports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL1JlcG9ydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Financial/TransactionReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvRmluYW5jaWFsL1RyYW5zYWN0aW9uUmVwb3J0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Home/EditProduct.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9FZGl0UHJvZHVjdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Home/Welcome.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9XZWxjb21lLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Reconciliation/OpenProtocol.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVjb25jaWxpYXRpb24vT3BlblByb3RvY29sLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Reconciliation/ViewProtocol.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVjb25jaWxpYXRpb24vVmlld1Byb3RvY29sLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/leo/Desktop/_DotNet/AirbnbShopApi_v2/AirbnbShopApi/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-gj6vsvcth4
